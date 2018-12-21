@@ -20,21 +20,18 @@
     </fragment>
 
     <FrameLayout
+        android:id="@+id/fragment_nivell"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
 
-
-
-
     </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/fragment_llistat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
-
     </FrameLayout>
 
 

@@ -12,23 +12,16 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link fragmentoNivel.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link fragmentoNivel#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class fragmentoNivel extends Fragment implements View.OnClickListener {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String LISTADO_CICLOS_FILTRADO = "llistat Cicles Filtrat";
+    private static final String NUM_BOTONES_NIVEL = "num botons de nivell";
     private Button btnMedio;
     private Button btnSuperior;
-    private boolean mParam1;
-    private boolean mParam2;
+    private ArrayList<CicleFlorida> arrayRecibidoPorParametro;
+    private int numBotonsRecibidoPorParametro;
 
-    private OnFragmentInteractionListener mListener;
+    private comunicaTipoNivel comunicador;
     /*
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,20 +38,13 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment fragmentoNivel.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static fragmentoNivel newInstanceNivel(boolean param1, boolean param2 ) {
+    public static fragmentoNivel newInstanceNivel(ArrayList<CicleFlorida> llistat, int numBotons ) {
         fragmentoNivel fragment = new fragmentoNivel();
         Bundle args = new Bundle();
-        args.putBoolean(ARG_PARAM1, param1);
-        args.putBoolean(ARG_PARAM2, param2);
+        args.putParcelableArrayList(LISTADO_CICLOS_FILTRADO, llistat);
+        args.putInt(NUM_BOTONES_NIVEL, numBotons);
         fragment.setArguments(args);
         return fragment;
     }
@@ -66,6 +52,12 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            //Recogeremos los parámetros recibidos por el Bundle y los guardaremos en atributos de esta clase
+            Bundle b = getArguments();
+            arrayRecibidoPorParametro=b.getParcelableArrayList(LISTADO_CICLOS_FILTRADO);
+            numBotonsRecibidoPorParametro=b.getInt(NUM_BOTONES_NIVEL);
+        }
 
     }
 
@@ -75,40 +67,32 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
         View v= inflater.inflate(R.layout.fragment_fragmento_nivel, container, false);
         btnMedio= v.findViewById(R.id.btnMedio);
         btnSuperior= v.findViewById(R.id.btnSuperior);
-        if(mParam1==true)
-        {
-            btnMedio.setEnabled(true);
-        }else{
-            btnMedio.setEnabled(false);
-        }
-
-        if (mParam2)
-        {
-            btnSuperior.setEnabled(true);
-        }
-        else
-        {
-            btnSuperior.setEnabled(false);
-        }
 
         btnMedio.setOnClickListener(this);
         btnSuperior.setOnClickListener(this);
 
+        if(numBotonsRecibidoPorParametro==1){
+            btnMedio.setEnabled(true);
+            btnSuperior.setEnabled(false);
+        }
+        if(numBotonsRecibidoPorParametro==2){
+            btnMedio.setEnabled(false);
+            btnSuperior.setEnabled(true);
+        }
+        if(numBotonsRecibidoPorParametro==3){
+            btnMedio.setEnabled(true);
+            btnSuperior.setEnabled(true);
+        }
+
+
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
+   @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+       if (context instanceof comunicaTipoNivel) {
+            comunicador = (comunicaTipoNivel) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -118,12 +102,16 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+      comunicador = null;
     }
 
     @Override
     public void onClick(View view) {
-
+        if (view.getId()==R.id.btnMedio){
+            comunicador.filtrarTipoNivel("Mitjà",arrayRecibidoPorParametro);
+        }if(view.getId()==R.id.btnSuperior){
+            comunicador.filtrarTipoNivel("Superior",arrayRecibidoPorParametro);
+        }
     }
 
     /**
@@ -136,8 +124,9 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+  public interface comunicaTipoNivel {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void filtrarTipoNivel(String nivel,ArrayList<CicleFlorida> lista);
     }
+
 }
