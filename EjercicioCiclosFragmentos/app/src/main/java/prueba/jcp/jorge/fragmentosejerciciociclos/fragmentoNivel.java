@@ -95,7 +95,7 @@ public class fragmentoNivel extends Fragment implements View.OnClickListener {
             comunicador = (comunicaTipoNivel) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " has d'implementar comunicaTipoNivel");
         }
     }
 
